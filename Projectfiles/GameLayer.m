@@ -16,9 +16,9 @@ const float deceleration = 0.4f;
 // Accelerometer sensitivity (higher = more sensitive)
 const float sensitivity = 6.0f;
 // Maximum velocity
-const float maxVelocity = 100.0f;
+const float maxVelocity = 120.0f;
 
-const float scaleFactor=1.0f;
+float scaleFactor=1.0f;
 
 BOOL velocityMode=YES;
 
@@ -43,10 +43,27 @@ BOOL velocityMode=YES;
                                   block:
           ^(id sender){[self changeBackgroundColor:ccc4(0, 255, 0, 100)];}];
         
-        CCMenu *itemMenu=[CCMenu menuWithItems:orangeButton, blueButton, greenButton, nil];
-        [itemMenu setPosition:ccp(50, 160)];
-        [itemMenu alignItemsVerticallyWithPadding:60];
-        [self addChild:itemMenu z:1 tag:2];
+        CCMenu *colorMenu=[CCMenu menuWithItems:orangeButton, blueButton, greenButton, nil];
+        [colorMenu setPosition:ccp(80, 160)];
+        [colorMenu alignItemsVerticallyWithPadding:60];
+        [self addChild:colorMenu z:1 tag:2];
+        
+        CCMenuItemFont *lowButton=[CCMenuItemFont itemFromString:@"Low"
+                                                              block:
+                                      ^(id sender){scaleFactor=.5f;}];
+        
+        CCMenuItemFont *medButton=[CCMenuItemFont itemFromString:@"Med" 
+                                                            block:
+                                    ^(id sender){scaleFactor=1.0f;}];
+        
+        CCMenuItemFont *highButton=[CCMenuItemFont itemFromString:@"High" 
+                                                             block:
+                                     ^(id sender){scaleFactor=2.0f;}];
+        
+        CCMenu *sensitivityMenu=[CCMenu menuWithItems:highButton, medButton, lowButton, nil];
+        [sensitivityMenu setPosition:ccp(400, 160)];
+        [sensitivityMenu alignItemsVerticallyWithPadding:60];
+        [self addChild:sensitivityMenu z:1 tag:3];
         
         // Enable accelerometer input events.
 		[KKInput sharedInput].accelerometerActive = YES;
