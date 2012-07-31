@@ -1,6 +1,9 @@
 Accelerometer Test
 
 
-Found at http://www.lonhosford.com/lonblog/2011/12/18/kobold2d-xcode-4-introduction-tutorial-lesson-1-basic-accelerometer/
+Based on http://www.lonhosford.com/lonblog/2011/12/18/kobold2d-xcode-4-introduction-tutorial-lesson-1-basic-accelerometer/
 
-Just Started, nothing here yet
+To do: 
+background color change based on position
+
+Requires Kobold2D to run
