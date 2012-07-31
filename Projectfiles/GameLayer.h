@@ -7,8 +7,11 @@
 
 #import "kobold2d.h"
 
-@interface HelloWorldLayer : CCLayer
+@interface GameLayer : CCLayer
 {
+    CCSprite* player;
+    CGPoint playerVelocity;
+
 }
 
 @end
