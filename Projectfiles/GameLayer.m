@@ -17,12 +17,36 @@ const float sensitivity = 6.0f;
 // Maximum velocity
 const float maxVelocity = 100.0f;
 
+const float scaleFactor=1.0f;
+
+BOOL velocityMode=YES;
+
 @implementation GameLayer
 
 -(id) init
 {
 	if ((self = [super init]))
 	{
+        CCLayerColor* colorLayer = [CCLayerColor layerWithColor:ccc4(50, 100, 200, 100)];
+        [self addChild:colorLayer z:10 tag:0];
+        
+        CCMenuItemFont *orangeButton=[CCMenuItemFont itemFromString:@"Orange"
+                                 block:
+         ^(id sender){[self changeBackgroundColor:ccc4(255, 127, 0, 100)];}];
+        
+         CCMenuItemFont *blueButton=[CCMenuItemFont itemFromString:@"Blue" 
+                                  block:
+          ^(id sender){[self changeBackgroundColor:ccc4(0, 0, 255, 100)];}];
+        
+         CCMenuItemFont *greenButton=[CCMenuItemFont itemFromString:@"Green" 
+                                  block:
+          ^(id sender){[self changeBackgroundColor:ccc4(0, 255, 0, 100)];}];
+        
+        CCMenu *itemMenu=[CCMenu menuWithItems:orangeButton, blueButton, greenButton, nil];
+        [itemMenu setPosition:ccp(50, 200)];
+        [itemMenu alignItemsVerticallyWithPadding:60];
+        [self addChild:itemMenu z:1 tag:2];
+        
         // Enable accelerometer input events.
 		[KKInput sharedInput].accelerometerActive = YES;
 		[KKInput sharedInput].acceleration.filteringFactor = 0.2f;
@@ -33,21 +57,8 @@ const float maxVelocity = 100.0f;
         CGSize screenSize = [[CCDirector sharedDirector] winSize];
 		float imageHeight = [player texture].contentSize.height;
 		player.position = CGPointMake(screenSize.width / 2, imageHeight / 2);
-		glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
-		// First line of title
-		CCLabelTTF* label = [CCLabelTTF labelWithString:@"Kobold2d Intro Tutorial" 
-                                               fontName:@"Arial"  
-                                               fontSize:30];
-		label.position = [CCDirector sharedDirector].screenCenter;
-		label.color = ccCYAN;
-        [self addChild:label];
-        // Second line of title
- 		CCLabelTTF* label2 = [CCLabelTTF labelWithString:@"Lesson 1"
-                                                fontName:@"Arial"
-                                                fontSize:24];
-		label2.color = ccCYAN;
-        label2.position = CGPointMake([CCDirector sharedDirector].screenCenter.x ,label.position.y - label.boundingBox.size.height);
-        [self addChild:label2];
+		//glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+
         // Start animation -  the update method is called.
         [self scheduleUpdate];;
 	}
@@ -84,6 +95,50 @@ const float maxVelocity = 100.0f;
         playerVelocity.y = -maxVelocity;
     }
 }
+#pragma mark-
+#pragma mark BackgroundColoring
+-(void) changeBackgroundColor: (ccColor4B) color
+{
+    [self removeChildByTag:0 cleanup:YES];
+    CCLayerColor* colorLayer = [CCLayerColor layerWithColor:color];
+    [self addChild:colorLayer z:10 tag:0];
+    
+    
+}
+
+-(void) changeBackgroundByDelta: (int) delta
+{
+    CCLayerColor* colorLayer=(CCLayerColor *)[self getChildByTag:0];
+    ccColor3B color=colorLayer.color;
+    int r=color.r+delta*scaleFactor;
+    int g=color.g+delta*scaleFactor;
+    int b=color.b+delta*scaleFactor;
+    if (r>255) r=255;
+    if (r<0) r=0;
+    if (g>255) g=255;
+    if (g<0) g=0;
+    if (b>255) b=255;
+    if (b<0) b=0;
+    [self changeBackgroundColor: ccc4(r,g,b, [colorLayer opacity])];
+}
+
+-(void) changeBackgroundByVelocityX: (float) x y: (float) y
+{
+    CCLayerColor* colorLayer=(CCLayerColor *)[self getChildByTag:0];
+    ccColor3B color=colorLayer.color;
+    int r=color.r+x*scaleFactor;
+    int g=color.g+y*scaleFactor;
+    int b=color.b+(x+y)/2*scaleFactor;
+    if (r>255) r=255;
+    if (r<0) r=0;
+    if (g>255) g=255;
+    if (g<0) g=0;
+    if (b>255) b=255;
+    if (b<0) b=0;
+    [self changeBackgroundColor: ccc4(r,g,b, [colorLayer opacity])];
+}
+
+#pragma mark-
 #pragma mark update
 -(void) update:(ccTime)delta
 {
@@ -95,6 +150,10 @@ const float maxVelocity = 100.0f;
     CGPoint pos = player.position;
     pos.x += playerVelocity.x;
     pos.y += playerVelocity.y;
+    if (velocityMode)
+    {
+        [self changeBackgroundByVelocityX:playerVelocity.x y:playerVelocity.y];
+    } 
     // The player constrainted to inside the screen
     CGSize screenSize = [[CCDirector sharedDirector] winSize];
     // Half the player image size player sprite position is the center of the image

@@ -1,9 +1,11 @@
 Accelerometer Test
-
+Color changes based on the velocity components of the ball
 
 Based on http://www.lonhosford.com/lonblog/2011/12/18/kobold2d-xcode-4-introduction-tutorial-lesson-1-basic-accelerometer/
 
+
+
 To do: 
-background color change based on position
+Multiple Balls- Ball class
 
 Requires Kobold2D to run
