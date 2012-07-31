@@ -70,34 +70,70 @@ const float maxVelocity = 100.0f;
     }
 }
 
+-(void) acceleratePlayerWithY:(double)yAcceleration
+{
+    // Adjust velocity based on current accelerometer acceleration
+    playerVelocity.y = (playerVelocity.y * deceleration) + (yAcceleration * sensitivity);
+    // Limit the maximum velocity of the player sprite, in both directions (positive & negative values)
+    if (playerVelocity.y > maxVelocity)
+    {
+        playerVelocity.y = maxVelocity;
+    }
+    else if (playerVelocity.y < -maxVelocity)
+    {
+        playerVelocity.y = -maxVelocity;
+    }
+}
 #pragma mark update
 -(void) update:(ccTime)delta
 {
     // Gain access to the user input devices / states
     KKInput* input = [KKInput sharedInput];
     [self acceleratePlayerWithX:input.acceleration.smoothedX];
+    [self acceleratePlayerWithY:input.acceleration.smoothedY];
     // Accumulate up the playerVelocity to the player's position
     CGPoint pos = player.position;
     pos.x += playerVelocity.x;
+    pos.y += playerVelocity.y;
     // The player constrainted to inside the screen
     CGSize screenSize = [[CCDirector sharedDirector] winSize];
     // Half the player image size player sprite position is the center of the image
     float imageWidthHalved = [player texture].contentSize.width * 0.5f;
     float leftBorderLimit = imageWidthHalved;
     float rightBorderLimit = screenSize.width - imageWidthHalved;
+    
+    float imageHeightHalved = [player texture].contentSize.height * 0.5f;
+    float bottomBorderLimit = imageHeightHalved;
+    float topBorderLimit = screenSize.height - imageHeightHalved;
     // Hit left boundary
     if (pos.x < leftBorderLimit)
     {
         pos.x = leftBorderLimit;
         // Set velocity to zero
-        playerVelocity = CGPointZero;
+        playerVelocity.x = CGPointZero.x;
     }
     // Hit right boundary
     else if (pos.x > rightBorderLimit)
     {
         pos.x = rightBorderLimit;
         // Set velocity to zero
-        playerVelocity = CGPointZero;
+        playerVelocity.x = CGPointZero.x;
+    }
+    
+    //Hit bottom boundary
+    if (pos.y < bottomBorderLimit)
+    {
+        pos.y = bottomBorderLimit;
+        // Set velocity to zero
+        playerVelocity.y = CGPointZero.y;
+    }
+    
+    //Hit top boundary
+    else if (pos.y > topBorderLimit)
+    {
+        pos.y = topBorderLimit;
+        // Set velocity to zero
+        playerVelocity.y = CGPointZero.y;
     }
     // Move the player
     player.position = pos; 
