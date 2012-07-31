@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C97181E715C79BA20048CB6A /* green_ball-hd.png in Resources */ = {isa = PBXBuildFile; fileRef = C97181E515C79BA20048CB6A /* green_ball-hd.png */; };
 		C97181E815C79BA20048CB6A /* green_ball.png in Resources */ = {isa = PBXBuildFile; fileRef = C97181E615C79BA20048CB6A /* green_ball.png */; };
+		C9973B4515C8458100CFD18B /* explo2.wav in Resources */ = {isa = PBXBuildFile; fileRef = C9973B4415C8458100CFD18B /* explo2.wav */; };
 		DC485B1113AA0E5600F2BC70 /* libchipmunk-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC485B0D13AA0E5600F2BC70 /* libchipmunk-mac.a */; };
 		DC485B1713AA0EBB00F2BC70 /* libbox2d-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC485B1613AA0EBB00F2BC70 /* libbox2d-mac.a */; };
 		DC485B4613AA18A600F2BC70 /* libcocosdenshion-mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC485B4513AA18A600F2BC70 /* libcocosdenshion-mac.a */; };
@@ -52,6 +53,7 @@
 /* Begin PBXFileReference section */
 		C97181E515C79BA20048CB6A /* green_ball-hd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "green_ball-hd.png"; sourceTree = "<group>"; };
 		C97181E615C79BA20048CB6A /* green_ball.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = green_ball.png; sourceTree = "<group>"; };
+		C9973B4415C8458100CFD18B /* explo2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = explo2.wav; path = ../../../SpitefulSquirrels/Projectfiles/Resources/explo2.wav; sourceTree = "<group>"; };
 		DC3BE97813B4FB71003739CC /* BuildSettings-iOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "BuildSettings-iOS.xcconfig"; sourceTree = "<group>"; };
 		DC485B0D13AA0E5600F2BC70 /* libchipmunk-mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libchipmunk-mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC485B1613AA0EBB00F2BC70 /* libbox2d-mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libbox2d-mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -234,6 +236,7 @@
 		DCC1A39413A94F1A005BD75D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C9973B4415C8458100CFD18B /* explo2.wav */,
 				C97181E515C79BA20048CB6A /* green_ball-hd.png */,
 				C97181E615C79BA20048CB6A /* green_ball.png */,
 				DCC1A39513A94F1A005BD75D /* config.lua */,
@@ -345,6 +348,7 @@
 				DC599A43142289D70067495F /* iTunesArtwork in Resources */,
 				C97181E715C79BA20048CB6A /* green_ball-hd.png in Resources */,
 				C97181E815C79BA20048CB6A /* green_ball.png in Resources */,
+				C9973B4515C8458100CFD18B /* explo2.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,6 +6,7 @@
  */
 
 #import "GameLayer.h"
+#import "SimpleAudioEngine.h"
 
 @interface GameLayer (PrivateMethods)
 @end
@@ -43,7 +44,7 @@ BOOL velocityMode=YES;
           ^(id sender){[self changeBackgroundColor:ccc4(0, 255, 0, 100)];}];
         
         CCMenu *itemMenu=[CCMenu menuWithItems:orangeButton, blueButton, greenButton, nil];
-        [itemMenu setPosition:ccp(50, 200)];
+        [itemMenu setPosition:ccp(50, 160)];
         [itemMenu alignItemsVerticallyWithPadding:60];
         [self addChild:itemMenu z:1 tag:2];
         
@@ -58,6 +59,7 @@ BOOL velocityMode=YES;
 		float imageHeight = [player texture].contentSize.height;
 		player.position = CGPointMake(screenSize.width / 2, imageHeight / 2);
 		//glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
+        [[SimpleAudioEngine sharedEngine] preloadEffect:@"explo2.wav"];
 
         // Start animation -  the update method is called.
         [self scheduleUpdate];;
@@ -170,6 +172,7 @@ BOOL velocityMode=YES;
         pos.x = leftBorderLimit;
         // Set velocity to zero
         playerVelocity.x = CGPointZero.x;
+        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     // Hit right boundary
     else if (pos.x > rightBorderLimit)
@@ -177,6 +180,7 @@ BOOL velocityMode=YES;
         pos.x = rightBorderLimit;
         // Set velocity to zero
         playerVelocity.x = CGPointZero.x;
+        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     
     //Hit bottom boundary
@@ -185,6 +189,7 @@ BOOL velocityMode=YES;
         pos.y = bottomBorderLimit;
         // Set velocity to zero
         playerVelocity.y = CGPointZero.y;
+        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     
     //Hit top boundary
@@ -193,6 +198,7 @@ BOOL velocityMode=YES;
         pos.y = topBorderLimit;
         // Set velocity to zero
         playerVelocity.y = CGPointZero.y;
+        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     // Move the player
     player.position = pos; 
