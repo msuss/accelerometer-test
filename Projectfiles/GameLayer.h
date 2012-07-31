@@ -6,10 +6,11 @@
  */
 
 #import "kobold2d.h"
+#import "Ball.h"
 
 @interface GameLayer : CCLayer
 {
-    CCSprite* player;
+    Ball *player;
     CGPoint playerVelocity;
 
 }

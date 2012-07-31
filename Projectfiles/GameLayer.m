@@ -7,19 +7,21 @@
 
 #import "GameLayer.h"
 #import "SimpleAudioEngine.h"
+#import "Ball.h"
 
 @interface GameLayer (PrivateMethods)
 @end
 
-// Velocity deceleration
-const float deceleration = 0.4f;
-// Accelerometer sensitivity (higher = more sensitive)
-const float sensitivity = 6.0f;
-// Maximum velocity
-const float maxVelocity = 120.0f;
+//// Velocity deceleration
+//const float deceleration = 0.4f;
+//// Accelerometer sensitivity (higher = more sensitive)
+//const float sensitivity = 6.0f;
+//// Maximum velocity
+//const float maxVelocity = 120.0f;
 
-float scaleFactor=1.0f;
-
+float SCALE_FACTOR=1.0f;
+const float MASS_FACTOR=50.0f;
+const float FRICTION_FACTOR=50.0f;
 BOOL velocityMode=YES;
 
 @implementation GameLayer
@@ -50,15 +52,15 @@ BOOL velocityMode=YES;
         
         CCMenuItemFont *lowButton=[CCMenuItemFont itemFromString:@"Low"
                                                               block:
-                                      ^(id sender){scaleFactor=.5f;}];
+                                      ^(id sender){SCALE_FACTOR=.5f;}];
         
         CCMenuItemFont *medButton=[CCMenuItemFont itemFromString:@"Med" 
                                                             block:
-                                    ^(id sender){scaleFactor=1.0f;}];
+                                    ^(id sender){SCALE_FACTOR=1.0f;}];
         
         CCMenuItemFont *highButton=[CCMenuItemFont itemFromString:@"High" 
                                                              block:
-                                     ^(id sender){scaleFactor=2.0f;}];
+                                     ^(id sender){SCALE_FACTOR=2.0f;}];
         
         CCMenu *sensitivityMenu=[CCMenu menuWithItems:highButton, medButton, lowButton, nil];
         [sensitivityMenu setPosition:ccp(400, 160)];
@@ -69,7 +71,7 @@ BOOL velocityMode=YES;
 		[KKInput sharedInput].accelerometerActive = YES;
 		[KKInput sharedInput].acceleration.filteringFactor = 0.2f;
         // Graphic for player
-        player = [CCSprite spriteWithFile:@"green_ball.png"];
+        player = [Ball ballWithMass:10 friction:1 speed:100];
 		[self addChild:player z:0 tag:1];
         // Position player        
         CGSize screenSize = [[CCDirector sharedDirector] winSize];
@@ -85,34 +87,38 @@ BOOL velocityMode=YES;
 }
 
 #pragma mark Player Movement
--(void) acceleratePlayerWithX:(double)xAcceleration
+-(void) acceleratePlayerWithX:(double)xAcceleration y:(double) yAcceleration
 {
     // Adjust velocity based on current accelerometer acceleration
-    playerVelocity.x = (playerVelocity.x * deceleration) + (xAcceleration * sensitivity);
+    float deceleration=(player.mass*player.friction/FRICTION_FACTOR);
+
+    playerVelocity.x = (playerVelocity.x -playerVelocity.x*deceleration) + (xAcceleration * MASS_FACTOR/player.mass);
     // Limit the maximum velocity of the player sprite, in both directions (positive & negative values)
-    if (playerVelocity.x > maxVelocity)
+    if (playerVelocity.x > player.maxSpeed)
     {
-        playerVelocity.x = maxVelocity;
+        playerVelocity.x = player.maxSpeed;
     }
-    else if (playerVelocity.x < -maxVelocity)
+    else if (playerVelocity.x < -player.maxSpeed)
     {
-        playerVelocity.x = -maxVelocity;
+        playerVelocity.x = -player.maxSpeed;
+    }
+    
+    // Adjust velocity based on current accelerometer acceleration
+    playerVelocity.y = (playerVelocity.y-playerVelocity.y*deceleration) + (yAcceleration * MASS_FACTOR/player.mass);
+    // Limit the maximum velocity of the player sprite, in both directions (positive & negative values)
+    if (playerVelocity.y > player.maxSpeed)
+    {
+        playerVelocity.y = player.maxSpeed;
+    }
+    else if (playerVelocity.y < -player.maxSpeed)
+    {
+        playerVelocity.y = -player.maxSpeed;
     }
 }
 
 -(void) acceleratePlayerWithY:(double)yAcceleration
 {
-    // Adjust velocity based on current accelerometer acceleration
-    playerVelocity.y = (playerVelocity.y * deceleration) + (yAcceleration * sensitivity);
-    // Limit the maximum velocity of the player sprite, in both directions (positive & negative values)
-    if (playerVelocity.y > maxVelocity)
-    {
-        playerVelocity.y = maxVelocity;
-    }
-    else if (playerVelocity.y < -maxVelocity)
-    {
-        playerVelocity.y = -maxVelocity;
-    }
+   
 }
 #pragma mark-
 #pragma mark BackgroundColoring
@@ -129,9 +135,9 @@ BOOL velocityMode=YES;
 {
     CCLayerColor* colorLayer=(CCLayerColor *)[self getChildByTag:0];
     ccColor3B color=colorLayer.color;
-    int r=color.r+delta*scaleFactor;
-    int g=color.g+delta*scaleFactor;
-    int b=color.b+delta*scaleFactor;
+    int r=color.r+delta*SCALE_FACTOR;
+    int g=color.g+delta*SCALE_FACTOR;
+    int b=color.b+delta*SCALE_FACTOR;
     if (r>255) r=255;
     if (r<0) r=0;
     if (g>255) g=255;
@@ -145,9 +151,9 @@ BOOL velocityMode=YES;
 {
     CCLayerColor* colorLayer=(CCLayerColor *)[self getChildByTag:0];
     ccColor3B color=colorLayer.color;
-    int r=color.r+x*scaleFactor;
-    int g=color.g+y*scaleFactor;
-    int b=color.b+(x+y)/2*scaleFactor;
+    int r=color.r+x*SCALE_FACTOR;
+    int g=color.g+y*SCALE_FACTOR;
+    int b=color.b+(x+y)/2*SCALE_FACTOR;
     if (r>255) r=255;
     if (r<0) r=0;
     if (g>255) g=255;
@@ -163,8 +169,7 @@ BOOL velocityMode=YES;
 {
     // Gain access to the user input devices / states
     KKInput* input = [KKInput sharedInput];
-    [self acceleratePlayerWithX:input.acceleration.smoothedX];
-    [self acceleratePlayerWithY:input.acceleration.smoothedY];
+    [self acceleratePlayerWithX:input.acceleration.smoothedX y:input.acceleration.smoothedY];
     // Accumulate up the playerVelocity to the player's position
     CGPoint pos = player.position;
     pos.x += playerVelocity.x;
