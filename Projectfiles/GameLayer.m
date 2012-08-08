@@ -171,13 +171,7 @@ BOOL velocityMode=YES;
     KKInput* input = [KKInput sharedInput];
     [self acceleratePlayerWithX:input.acceleration.smoothedX y:input.acceleration.smoothedY];
     // Accumulate up the playerVelocity to the player's position
-    CGPoint pos = player.position;
-    pos.x += playerVelocity.x;
-    pos.y += playerVelocity.y;
-    if (velocityMode)
-    {
-        [self changeBackgroundByVelocityX:playerVelocity.x y:playerVelocity.y];
-    } 
+    
     // The player constrainted to inside the screen
     CGSize screenSize = [[CCDirector sharedDirector] winSize];
     // Half the player image size player sprite position is the center of the image
@@ -189,12 +183,25 @@ BOOL velocityMode=YES;
     float bottomBorderLimit = imageHeightHalved;
     float topBorderLimit = screenSize.height - imageHeightHalved;
     // Hit left boundary
+    
+    CGPoint pos = player.position;
+    bool xSound=true;
+    bool ySound=true;
+    if (pos.x==leftBorderLimit||pos.x==rightBorderLimit) xSound=FALSE;
+    if (pos.y==topBorderLimit||pos.y==bottomBorderLimit) ySound=FALSE;
+    pos.x += playerVelocity.x;
+    pos.y += playerVelocity.y;
+    if (velocityMode)
+    {
+        [self changeBackgroundByVelocityX:playerVelocity.x y:playerVelocity.y];
+    } 
+   
     if (pos.x < leftBorderLimit)
     {
         pos.x = leftBorderLimit;
         // Set velocity to zero
         
-        if (playerVelocity.x<0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (xSound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.x = CGPointZero.x;
     }
     // Hit right boundary
@@ -202,7 +209,7 @@ BOOL velocityMode=YES;
     {
         pos.x = rightBorderLimit;
         // Set velocity to zero
-        if (playerVelocity.x>0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (xSound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.x = CGPointZero.x;
     }
     
@@ -211,7 +218,7 @@ BOOL velocityMode=YES;
     {
         pos.y = bottomBorderLimit;
         // Set velocity to zero
-        if (playerVelocity.y<0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (ySound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.y = CGPointZero.y;
     }
     
@@ -220,7 +227,7 @@ BOOL velocityMode=YES;
     {
         pos.y = topBorderLimit;
         // Set velocity to zero
-        if (playerVelocity.y>0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (ySound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.y = CGPointZero.y;
     }
     // Move the player
