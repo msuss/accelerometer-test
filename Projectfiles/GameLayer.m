@@ -23,6 +23,7 @@ float SCALE_FACTOR=1.0f;
 const float MASS_FACTOR=50.0f;
 const float FRICTION_FACTOR=.02f;
 BOOL velocityMode=YES;
+BOOL visibleMode=YES;
 
 @implementation GameLayer
 
@@ -72,6 +73,7 @@ BOOL velocityMode=YES;
 		[KKInput sharedInput].acceleration.filteringFactor = 0.2f;
         // Graphic for player
         player = [Ball ballWithMass:10 speed:100];
+        player.visible=visibleMode;
 		[self addChild:player z:0 tag:1];
         // Position player        
         CGSize screenSize = [[CCDirector sharedDirector] winSize];
@@ -246,7 +248,7 @@ BOOL velocityMode=YES;
         pos.x = leftBorderLimit;
         // Set velocity to zero
         
-        if (xSound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (xSound&&visibleMode)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.x = CGPointZero.x;
     }
     // Hit right boundary
@@ -254,7 +256,7 @@ BOOL velocityMode=YES;
     {
         pos.x = rightBorderLimit;
         // Set velocity to zero
-        if (xSound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (xSound&&visibleMode)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.x = CGPointZero.x;
     }
     
@@ -263,7 +265,7 @@ BOOL velocityMode=YES;
     {
         pos.y = bottomBorderLimit;
         // Set velocity to zero
-        if (ySound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (ySound&&visibleMode)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.y = CGPointZero.y;
     }
     
@@ -272,7 +274,7 @@ BOOL velocityMode=YES;
     {
         pos.y = topBorderLimit;
         // Set velocity to zero
-        if (ySound)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
+        if (ySound&&visibleMode)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.y = CGPointZero.y;
     }
     // Move the player
