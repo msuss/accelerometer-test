@@ -77,6 +77,14 @@ BOOL velocityMode=YES;
         CGSize screenSize = [[CCDirector sharedDirector] winSize];
 		float imageHeight = [player texture].contentSize.height;
 		player.position = CGPointMake(screenSize.width / 2, imageHeight / 2);
+        
+        //Extra Ball
+        Ball *ball1=[Ball ballWithMass:30 speed:100];
+        balls=[[NSMutableArray alloc] init];
+        [balls addObject:ball1];
+        [self addChild:ball1];
+        ball1.position=CGPointMake(screenSize.width/2, screenSize.height/2);
+        
 		//glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"explo2.wav"];
         
@@ -86,7 +94,7 @@ BOOL velocityMode=YES;
 	return self;
 }
 
-#pragma mark Player Movement
+#pragma mark PlayerMovement
 -(void) acceleratePlayerWithX:(double)xAcceleration y:(double) yAcceleration
 {
     // Adjust velocity based on current accelerometer acceleration
@@ -116,11 +124,38 @@ BOOL velocityMode=YES;
     }
 }
 
--(void) acceleratePlayerWithY:(double)yAcceleration
-{
-    
-}
 #pragma mark-
+
+#pragma mark PlayerMovement
+-(void) accelerateBall: (Ball *)ball withX:(double)xAcceleration y:(double) yAcceleration
+{
+    // Adjust velocity based on current accelerometer acceleration
+    float deceleration=(player.mass*FRICTION_FACTOR);
+    
+    float tempX=(ball.velocity.x -ball.velocity.x*deceleration) + (xAcceleration * MASS_FACTOR/ball.mass);
+    float tempY=(ball.velocity.y-ball.velocity.y*deceleration) + (yAcceleration * MASS_FACTOR/ball.mass);
+    // Limit the maximum velocity of the player sprite, in both directions (positive & negative values)
+    if (tempX> ball.maxSpeed)
+    {
+        tempX = player.maxSpeed;
+    }
+    else if (tempX < -ball.maxSpeed)
+    {
+        tempX = -ball.maxSpeed;
+    }
+    
+    // Limit the maximum velocity of the player sprite, in both directions (positive & negative values)
+    if (tempY >ball.maxSpeed)
+    {
+        tempY= ball.maxSpeed;
+    }
+    else if (tempY < -ball.maxSpeed)
+    {
+        tempY = -ball.maxSpeed;
+    }
+    ball.velocity=ccp(tempX,tempY);
+}
+
 #pragma mark BackgroundColoring
 -(void) changeBackgroundColor: (ccColor4B) color
 {
@@ -167,11 +202,6 @@ BOOL velocityMode=YES;
 #pragma mark update
 -(void) update:(ccTime)delta
 {
-    // Gain access to the user input devices / states
-    KKInput* input = [KKInput sharedInput];
-    [self acceleratePlayerWithX:input.acceleration.smoothedX y:input.acceleration.smoothedY];
-    // Accumulate up the playerVelocity to the player's position
-    
     // The player constrainted to inside the screen
     CGSize screenSize = [[CCDirector sharedDirector] winSize];
     // Half the player image size player sprite position is the center of the image
@@ -182,6 +212,21 @@ BOOL velocityMode=YES;
     float imageHeightHalved = [player texture].contentSize.height * 0.5f;
     float bottomBorderLimit = imageHeightHalved;
     float topBorderLimit = screenSize.height - imageHeightHalved;
+    
+    // Gain access to the user input devices / states
+    KKInput* input = [KKInput sharedInput];
+    [self acceleratePlayerWithX:input.acceleration.smoothedX y:input.acceleration.smoothedY];
+    for (Ball *ball in balls)
+    {
+        [self accelerateBall:ball 
+                       withX:input.acceleration.smoothedX 
+                           y:input.acceleration.smoothedY];
+        float tempX = ball.velocity.x+ball.position.x;
+        float tempY = ball.velocity.y+ball.position.y;
+        ball.position=ccp(tempX,tempY);        
+    }
+    // Accumulate up the playerVelocity to the player's position
+    
     // Hit left boundary
     
     CGPoint pos = player.position;

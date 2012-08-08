@@ -16,6 +16,7 @@ const float DEFAULT_MAX_SPEED=100;
 
 @synthesize mass;
 @synthesize maxSpeed;
+@synthesize velocity;
 
 
 +(id)ballWithMass:(float)m speed:(float)s

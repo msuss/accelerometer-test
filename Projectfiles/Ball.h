@@ -12,10 +12,13 @@
 {
     float mass;
     float maxSpeed;
+    CGPoint velocity;
+
 }
 
 @property float mass;
 @property float maxSpeed;
+@property CGPoint velocity;
 
 +(id) ballWithMass:(float)m speed:(float)s;
 
