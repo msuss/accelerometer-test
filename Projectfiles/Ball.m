@@ -15,17 +15,15 @@ const float DEFAULT_FRICTION=1;
 const float DEFAULT_MAX_SPEED=100;
 
 @synthesize mass;
-@synthesize friction;
 @synthesize maxSpeed;
 
 
-+(id)ballWithMass:(float)m friction:(float)f speed:(float)s
++(id)ballWithMass:(float)m speed:(float)s
 {
     Ball *b=nil;
     if ((b = [[super alloc] initWithFile:@"green_ball.png"]))
     {
         b.mass = m;
-        b.friction=f;
         b.maxSpeed=s;
     }
     return b;

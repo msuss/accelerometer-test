@@ -10,15 +10,13 @@
 
 @interface Ball : CCSprite
 {
-    float friction;
     float mass;
     float maxSpeed;
 }
 
-@property float friction;
 @property float mass;
 @property float maxSpeed;
 
-+(id) ballWithMass:(float)m friction:(float)f speed:(float)s;
++(id) ballWithMass:(float)m speed:(float)s;
 
 @end

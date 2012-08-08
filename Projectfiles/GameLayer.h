@@ -11,8 +11,8 @@
 @interface GameLayer : CCLayer
 {
     Ball *player;
+    NSMutableArray *balls;
     CGPoint playerVelocity;
-
 }
 
 @end

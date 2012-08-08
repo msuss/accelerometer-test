@@ -21,7 +21,7 @@
 
 float SCALE_FACTOR=1.0f;
 const float MASS_FACTOR=50.0f;
-const float FRICTION_FACTOR=50.0f;
+const float FRICTION_FACTOR=.02f;
 BOOL velocityMode=YES;
 
 @implementation GameLayer
@@ -34,16 +34,16 @@ BOOL velocityMode=YES;
         [self addChild:colorLayer z:10 tag:0];
         
         CCMenuItemFont *orangeButton=[CCMenuItemFont itemFromString:@"Orange"
-                                 block:
-         ^(id sender){[self changeBackgroundColor:ccc4(255, 127, 0, 100)];}];
+                                                              block:
+                                      ^(id sender){[self changeBackgroundColor:ccc4(255, 127, 0, 100)];}];
         
-         CCMenuItemFont *blueButton=[CCMenuItemFont itemFromString:@"Blue" 
-                                  block:
-          ^(id sender){[self changeBackgroundColor:ccc4(0, 0, 255, 100)];}];
+        CCMenuItemFont *blueButton=[CCMenuItemFont itemFromString:@"Blue" 
+                                                            block:
+                                    ^(id sender){[self changeBackgroundColor:ccc4(0, 0, 255, 100)];}];
         
-         CCMenuItemFont *greenButton=[CCMenuItemFont itemFromString:@"Green" 
-                                  block:
-          ^(id sender){[self changeBackgroundColor:ccc4(0, 255, 0, 100)];}];
+        CCMenuItemFont *greenButton=[CCMenuItemFont itemFromString:@"Green" 
+                                                             block:
+                                     ^(id sender){[self changeBackgroundColor:ccc4(0, 255, 0, 100)];}];
         
         CCMenu *colorMenu=[CCMenu menuWithItems:orangeButton, blueButton, greenButton, nil];
         [colorMenu setPosition:ccp(80, 160)];
@@ -51,16 +51,16 @@ BOOL velocityMode=YES;
         [self addChild:colorMenu z:1 tag:2];
         
         CCMenuItemFont *lowButton=[CCMenuItemFont itemFromString:@"Low"
-                                                              block:
-                                      ^(id sender){SCALE_FACTOR=.5f;}];
+                                                           block:
+                                   ^(id sender){SCALE_FACTOR=.5f;}];
         
         CCMenuItemFont *medButton=[CCMenuItemFont itemFromString:@"Med" 
-                                                            block:
-                                    ^(id sender){SCALE_FACTOR=1.0f;}];
+                                                           block:
+                                   ^(id sender){SCALE_FACTOR=1.0f;}];
         
         CCMenuItemFont *highButton=[CCMenuItemFont itemFromString:@"High" 
-                                                             block:
-                                     ^(id sender){SCALE_FACTOR=2.0f;}];
+                                                            block:
+                                    ^(id sender){SCALE_FACTOR=2.0f;}];
         
         CCMenu *sensitivityMenu=[CCMenu menuWithItems:highButton, medButton, lowButton, nil];
         [sensitivityMenu setPosition:ccp(400, 160)];
@@ -71,7 +71,7 @@ BOOL velocityMode=YES;
 		[KKInput sharedInput].accelerometerActive = YES;
 		[KKInput sharedInput].acceleration.filteringFactor = 0.2f;
         // Graphic for player
-        player = [Ball ballWithMass:10 friction:1 speed:100];
+        player = [Ball ballWithMass:10 speed:100];
 		[self addChild:player z:0 tag:1];
         // Position player        
         CGSize screenSize = [[CCDirector sharedDirector] winSize];
@@ -79,7 +79,7 @@ BOOL velocityMode=YES;
 		player.position = CGPointMake(screenSize.width / 2, imageHeight / 2);
 		//glClearColor(0.1f, 0.1f, 0.3f, 1.0f);
         [[SimpleAudioEngine sharedEngine] preloadEffect:@"explo2.wav"];
-
+        
         // Start animation -  the update method is called.
         [self scheduleUpdate];;
 	}
@@ -90,8 +90,8 @@ BOOL velocityMode=YES;
 -(void) acceleratePlayerWithX:(double)xAcceleration y:(double) yAcceleration
 {
     // Adjust velocity based on current accelerometer acceleration
-    float deceleration=(player.mass*player.friction/FRICTION_FACTOR);
-
+    float deceleration=(player.mass*FRICTION_FACTOR);
+    
     playerVelocity.x = (playerVelocity.x -playerVelocity.x*deceleration) + (xAcceleration * MASS_FACTOR/player.mass);
     // Limit the maximum velocity of the player sprite, in both directions (positive & negative values)
     if (playerVelocity.x > player.maxSpeed)
@@ -118,7 +118,7 @@ BOOL velocityMode=YES;
 
 -(void) acceleratePlayerWithY:(double)yAcceleration
 {
-   
+    
 }
 #pragma mark-
 #pragma mark BackgroundColoring
@@ -193,16 +193,17 @@ BOOL velocityMode=YES;
     {
         pos.x = leftBorderLimit;
         // Set velocity to zero
+        
+        if (playerVelocity.x<0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.x = CGPointZero.x;
-        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     // Hit right boundary
     else if (pos.x > rightBorderLimit)
     {
         pos.x = rightBorderLimit;
         // Set velocity to zero
+        if (playerVelocity.x>0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.x = CGPointZero.x;
-        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     
     //Hit bottom boundary
@@ -210,8 +211,8 @@ BOOL velocityMode=YES;
     {
         pos.y = bottomBorderLimit;
         // Set velocity to zero
+        if (playerVelocity.y<0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.y = CGPointZero.y;
-        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     
     //Hit top boundary
@@ -219,8 +220,8 @@ BOOL velocityMode=YES;
     {
         pos.y = topBorderLimit;
         // Set velocity to zero
+        if (playerVelocity.y>0)[[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
         playerVelocity.y = CGPointZero.y;
-        [[SimpleAudioEngine sharedEngine] playEffect:@"explo2.wav"];
     }
     // Move the player
     player.position = pos; 
